@@ -384,11 +384,11 @@
           "filter": "datum.trans_group_en === 'Sales'"
         },
         {
-          "filter": "datum.reg_type_en === 'Off-Plan Properties' || datum.reg_type_en === 'Existing Properties'"
+          "calculate": "test(/off-?plan/i, datum.reg_type_en) ? 'Off-Plan Properties' : (test(/exist/i, datum.reg_type_en) ? 'Existing Properties' : null)",
+          "as": "propertyType"
         },
         {
-          "calculate": "datum.reg_type_en",
-          "as": "propertyType"
+          "filter": "datum.propertyType != null"
         },
         {
           "timeUnit": "utcyearmonth",
@@ -599,7 +599,8 @@
               "type": "csv",
               "parse": {
                 "instance_date": "utc:%Y-%m-%d",
-                "meter_sale_price": "number"
+                "meter_sale_price": "number",
+                "comm_num": "string"
               }
             }
           },
@@ -629,7 +630,7 @@
               "groupby": ["comm_num"]
             },
             {
-              "calculate": "toString(datum.comm_num)",
+              "calculate": "trim(toString(datum.comm_num))",
               "as": "comm_num_str"
             },
             {
