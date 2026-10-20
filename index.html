@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dubai Real Estate Analysis | CS333 Part 2 (Vega-Lite)</title>
+
+  <!-- Vega, Vega-Lite, and Vega-Embed libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <style>
+    :root {
+      --primary: #17324d;
+      --primary-light: #243447;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --accent: #2563eb;
+      --accent-subtle: #eff6ff;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px 20px 60px;
+      background-color: var(--bg-color);
+      color: var(--primary-light);
+      line-height: 1.6;
+    }
+
+    header {
+      margin-bottom: 35px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    h1 {
+      color: var(--primary);
+      margin: 0 0 8px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 35px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.35rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background-color: var(--accent-subtle);
+      color: var(--accent);
+    }
+
+    .chart-container {
+      width: 100%;
+      overflow-x: auto;
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 12px 0;
+    }
+
+    .answer-box {
+      margin-top: 22px;
+      padding: 20px 24px;
+      background-color: #f1f5f9;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .answer-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+      color: var(--primary);
+    }
+
+    .answer-box p {
+      margin: 0 0 10px;
+    }
+
+    .answer-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .answer-box ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .answer-box li {
+      margin-bottom: 6px;
+    }
+
+    .highlight {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Dubai Real Estate Transactions</h1>
+    <p class="subtitle">CS333 Data Visualization &mdash; Part 2: Interactive Analysis in Vega-Lite (Analysis Window: 1 Jan 2015 &ndash; 31 Aug 2026)</p>
+  </header>
+
+  <!-- Task 1 -->
+  <section id="task1-section">
+    <h2>
+      <span>Task 1: Transactions by Day of the Week</span>
+      <span class="badge">30%</span>
+    </h2>
+    <div id="task1" class="chart-container"></div>
+    <div class="answer-box">
+      <h3>Question &amp; Answer</h3>
+      <p><strong>Question:</strong> How many transactions were registered on Fridays (within the analysis window)?</p>
+      <p id="answer1"><span class="highlight">Friday transaction count: 6,553 transactions</span> (registered between 1 January 2015 and 31 August 2026).</p>
+    </div>
+  </section>
+
+  <!-- Task 2 -->
+  <section id="task2-section">
+    <h2>
+      <span>Task 2: Monthly Sales: Off-Plan vs. Existing Properties</span>
+      <span class="badge">30%</span>
+    </h2>
+    <div id="task2" class="chart-container"></div>
+    <div class="answer-box">
+      <h3>Question &amp; Answer</h3>
+      <p><strong>Question:</strong> In which month is the number of off-plan sales the highest, and how many off-plan sales is it?</p>
+      <p id="answer2">The highest number of off-plan sales occurred in <span class="highlight">September 2025</span>, with <span class="highlight">706 transactions</span>.</p>
+    </div>
+  </section>
+
+  <!-- Task 3 -->
+  <section id="task3-section">
+    <h2>
+      <span>Task 3: Map of Prices Across Dubai's Communities</span>
+      <span class="badge">40%</span>
+    </h2>
+    <div id="task3" class="chart-container"></div>
+    <div class="answer-box">
+      <h3>Question &amp; Answer</h3>
+      <p><strong>Question:</strong> Which community has the largest number of sales of units and villas, and how many sales is it? Is this visualization effective in finding this community? Why?</p>
+      
+      <p><span class="highlight">1. Highest Sales Community:</span><br>
+      The community with the largest number of sales of units and villas is <span class="highlight">Al Barsha South Fourth</span> (Community Number: <strong>681</strong>), with a total of <span class="highlight">3,925 sales</span> within the analysis window (followed by Business Bay with 3,634 sales, and Marsa Dubai with 2,955 sales).</p>
+      
+      <p><span class="highlight">2. Effectiveness of this Visualization:</span><br>
+      <strong>No, this choropleth map visualization is not effective for finding this community.</strong></p>
+
+      <p><span class="highlight">3. Justification (Visualization Principles):</span></p>
+      <ul>
+        <li><strong>Visual Variable / Encoding Mismatch:</strong> In this choropleth map, the primary visual channel (color hue and luminance) encodes <em>median price per square metre</em>, not the transaction volume (sales count). Sales count is not mapped to any visual variable on the map; it is only accessible interactively via tooltips on mouse hover. Therefore, a reader cannot visually distinguish between high-volume and low-volume communities by looking at the map.</li>
+        <li><strong>Area / Size Distortion (Choropleth Bias):</strong> Choropleth maps inherently draw visual attention to large geographic polygons (such as peripheral or desert communities) regardless of how few transactions took place there. High-density urban communities with large transaction counts (like Al Barsha South Fourth, Business Bay, and Marsa Dubai) have smaller, compact geographic footprints, making them easy to miss.</li>
+        <li><strong>High Cognitive Load / Exhaustive Search:</strong> Because transaction volume is hidden behind tooltips, finding the community with the highest sales requires an exhaustive trial-and-error search across all 226 communities. The reader must sequentially hover over every polygon, read the numbers, and remember the maximum.</li>
+        <li><strong>Sample Size Reliability:</strong> Communities with only a handful of sales (e.g., Jumeirah Second with only 23 sales at AED 75,635/m², or Oud Al Muteena First with only 1 sale) receive intense coloration, giving an exaggerated visual impression of market significance despite very small sample sizes.</li>
+        <li><strong>More Effective Alternative Visualizations:</strong>
+          <ul>
+            <li>A <strong>horizontal bar chart</strong> with communities sorted descending by sales count would allow instant, pre-attentive identification of Al Barsha South Fourth as the top community.</li>
+            <li>A <strong>proportional symbol (bubble) map</strong>, where circle size encodes sales count and circle color encodes median price per m² (as used in Part 1), would communicate both dimensions simultaneously and effectively.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>Dubai Land Department Real Estate Transactions (2015&ndash;2026) &bull; Visualizations powered by Vega-Lite v5</p>
+  </footer>
+
+  <script>
+    // Data source URLs
+    const transactionsURL =
+      "https://raw.githubusercontent.com/sharios/CS333/main/2026-27/Part%202/transactions.csv";
+
+    const geojsonURL =
+      "https://raw.githubusercontent.com/sharios/CS333/main/2026-27/Part%202/dubai.geojson";
+
+    // -------------------------------------------------------------
+    // Task 1: Transactions by Day of the Week
+    // -------------------------------------------------------------
+    const weekdays = [
+      "Monday", "Tuesday", "Wednesday", "Thursday",
+      "Friday", "Saturday", "Sunday"
+    ];
+
+    const task1Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": {
+        "text": "Dubai Real Estate Transactions by Day of Week",
+        "fontSize": 16,
+        "fontWeight": "bold"
+      },
+      "width": 650,
+      "height": 350,
+      "data": {
+        "url": transactionsURL,
+        "format": {
+          "type": "csv",
+          "parse": {
+            "instance_date": "utc:%Y-%m-%d"
+          }
+        }
+      },
+      "transform": [
+        {
+          "filter": "datum.instance_date != null && datum.instance_date >= utc(2015, 0, 1) && datum.instance_date < utc(2026, 8, 1)"
+        },
+        {
+          "calculate": "utcday(datum.instance_date)",
+          "as": "weekdayNumber"
+        },
+        {
+          "calculate": "['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][datum.weekdayNumber]",
+          "as": "weekday"
+        }
+      ],
+      "mark": {
+        "type": "bar",
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "weekday",
+          "type": "ordinal",
+          "sort": weekdays,
+          "scale": {"domain": weekdays},
+          "axis": {
+            "title": "Day of the Week",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "aggregate": "count",
+          "type": "quantitative",
+          "title": "Number of Transactions",
+          "scale": {"zero": true}
+        },
+        "color": {
+          "field": "weekday",
+          "type": "nominal",
+          "scale": {
+            "domain": weekdays,
+            "range": [
+              "#4E79A7", "#F28E2B", "#59A14F",
+              "#E15759", "#B07AA1", "#76B7B2", "#EDC948"
+            ]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {"field": "weekday", "type": "nominal", "title": "Day"},
+          {"aggregate": "count", "type": "quantitative", "title": "Transactions", "format": ","}
+        ]
+      }
+    };
+
+    vegaEmbed("#task1", task1Spec, { actions: false })
+      .catch(error => {
+        console.error(error);
+        document.querySelector("#task1").textContent =
+          "Chart error. Open the browser developer console for details.";
+      });
+
+    // Verification fetch for Friday transaction count
+    fetch(transactionsURL)
+      .then(response => response.text())
+      .then(csv => {
+        const rows = csv.trim().split(/\r?\n/);
+        const headers = rows[0].split(",");
+        const dateIndex = headers.indexOf("instance_date");
+
+        if (dateIndex === -1) {
+          return;
+        }
+
+        let fridayCount = 0;
+        for (let i = 1; i < rows.length; i++) {
+          const columns = rows[i].split(",");
+          const dateText = columns[dateIndex]?.replace(/^"|"$/g, "");
+          const date = new Date(dateText);
+
+          if (
+            !isNaN(date.getTime()) &&
+            date >= new Date("2015-01-01T00:00:00Z") &&
+            date < new Date("2026-09-01T00:00:00Z") &&
+            date.getUTCDay() === 5
+          ) {
+            fridayCount++;
+          }
+        }
+
+        document.querySelector("#answer1").innerHTML =
+          `<span class="highlight">Friday transaction count: ${fridayCount.toLocaleString()} transactions</span> (registered between 1 January 2015 and 31 August 2026).`;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+    // -------------------------------------------------------------
+    // Task 2: Monthly Sales: Off-Plan vs. Existing Properties
+    // -------------------------------------------------------------
+    const task2Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": {
+        "text": "Monthly Sales: Off-Plan vs Existing Properties",
+        "fontSize": 16,
+        "fontWeight": "bold"
+      },
+      "width": 750,
+      "height": 350,
+      "data": {
+        "url": transactionsURL,
+        "format": {
+          "type": "csv",
+          "parse": {
+            "instance_date": "utc:%Y-%m-%d"
+          }
+        }
+      },
+      "transform": [
+        {
+          "filter": "datum.instance_date != null && datum.instance_date >= utc(2015, 0, 1) && datum.instance_date < utc(2026, 8, 1)"
+        },
+        {
+          "filter": "datum.trans_group_en === 'Sales'"
+        },
+        {
+          "calculate": "lower(datum.reg_type_en || '')",
+          "as": "registrationType"
+        },
+        {
+          "calculate": "indexof(datum.registrationType, 'off-plan') >= 0 ? 'Off-Plan Properties' : 'Existing Properties'",
+          "as": "propertyType"
+        },
+        {
+          "timeUnit": "yearmonth",
+          "field": "instance_date",
+          "as": "month"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "point": true,
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "month",
+          "type": "temporal",
+          "title": "Month",
+          "axis": {
+            "format": "%Y",
+            "labelAngle": -45
+          }
+        },
+        "y": {
+          "aggregate": "count",
+          "type": "quantitative",
+          "title": "Number of Sales"
+        },
+        "color": {
+          "field": "propertyType",
+          "type": "nominal",
+          "title": "Property Type",
+          "scale": {
+            "domain": ["Off-Plan Properties", "Existing Properties"],
+            "range": ["#F28E2B", "#4E79A7"]
+          }
+        },
+        "tooltip": [
+          {
+            "field": "month",
+            "type": "temporal",
+            "title": "Month",
+            "format": "%B %Y"
+          },
+          {
+            "field": "propertyType",
+            "type": "nominal",
+            "title": "Property Type"
+          },
+          {
+            "aggregate": "count",
+            "type": "quantitative",
+            "title": "Sales",
+            "format": ","
+          }
+        ]
+      }
+    };
+
+    vegaEmbed("#task2", task2Spec, { actions: false })
+      .catch(error => {
+        console.error(error);
+        document.querySelector("#task2").textContent =
+          "Chart error. Check the browser console for details.";
+      });
+
+    // -------------------------------------------------------------
+    // Task 3: Map of Prices Across Dubai's Communities
+    // -------------------------------------------------------------
+    const task3Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": {
+        "text": "Median Property Price per m² Across Dubai Communities (Units & Villas)",
+        "subtitle": "Analysis window: 1 Jan 2015 – 31 Aug 2026. Grey areas indicate communities with no recorded sales.",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "subtitleFontSize": 12,
+        "subtitleColor": "#555"
+      },
+      "width": 950,
+      "height": 580,
+      "projection": {
+        "type": "mercator"
+      },
+      "layer": [
+        // Base Layer: All 226 Dubai Communities (rendered in light neutral grey)
+        {
+          "data": {
+            "url": geojsonURL,
+            "format": {
+              "type": "json",
+              "property": "features"
+            }
+          },
+          "transform": [
+            {"calculate": "'0'", "as": "no_sales"},
+            {"calculate": "'No sales recorded'", "as": "no_price"}
+          ],
+          "mark": {
+            "type": "geoshape",
+            "fill": "#e2e8f0",
+            "stroke": "#ffffff",
+            "strokeWidth": 0.6
+          },
+          "encoding": {
+            "tooltip": [
+              {"field": "properties.CNAME_E", "type": "nominal", "title": "Community"},
+              {"field": "properties.COMM_NUM", "type": "nominal", "title": "Community No."},
+              {"field": "no_sales", "type": "nominal", "title": "Number of Sales"},
+              {"field": "no_price", "type": "nominal", "title": "Median Price (AED/m²)"}
+            ]
+          }
+        },
+        // Data Layer: Communities with Sales of Units & Villas (colored by Median Price per m²)
+        {
+          "data": {
+            "url": transactionsURL,
+            "format": {
+              "type": "csv",
+              "parse": {
+                "instance_date": "utc:%Y-%m-%d",
+                "meter_sale_price": "number"
+              }
+            }
+          },
+          "transform": [
+            {
+              "filter": "datum.instance_date != null && datum.instance_date >= utc(2015, 0, 1) && datum.instance_date < utc(2026, 8, 1)"
+            },
+            {
+              "filter": "datum.trans_group_en === 'Sales'"
+            },
+            {
+              "filter": "datum.property_type_en === 'Unit' || datum.property_type_en === 'Villa'"
+            },
+            {
+              "filter": "datum.meter_sale_price != null && datum.meter_sale_price > 0 && datum.comm_num != null"
+            },
+            {
+              "aggregate": [
+                {"op": "median", "field": "meter_sale_price", "as": "median_price"},
+                {"op": "count", "as": "sales_count"}
+              ],
+              "groupby": ["comm_num"]
+            },
+            {
+              "calculate": "toString(datum.comm_num)",
+              "as": "comm_num_str"
+            },
+            {
+              "lookup": "comm_num_str",
+              "from": {
+                "data": {
+                  "url": geojsonURL,
+                  "format": {
+                    "type": "json",
+                    "property": "features"
+                  }
+                },
+                "key": "properties.COMM_NUM"
+              },
+              "as": "geo"
+            },
+            {
+              "filter": "datum.geo != null && datum.geo.geometry != null"
+            }
+          ],
+          "mark": {
+            "type": "geoshape",
+            "stroke": "#475569",
+            "strokeWidth": 0.5
+          },
+          "encoding": {
+            "shape": {
+              "field": "geo",
+              "type": "geojson"
+            },
+            "color": {
+              "field": "median_price",
+              "type": "quantitative",
+              "title": "Median Price (AED/m²)",
+              "scale": {
+                "type": "log",
+                "scheme": "yelloworangered"
+              },
+              "legend": {
+                "orient": "bottom-left",
+                "direction": "horizontal",
+                "gradientLength": 240,
+                "format": ",.0f",
+                "titleFontSize": 11,
+                "labelFontSize": 10
+              }
+            },
+            "tooltip": [
+              {"field": "geo.properties.CNAME_E", "type": "nominal", "title": "Community"},
+              {"field": "comm_num", "type": "nominal", "title": "Community No."},
+              {"field": "sales_count", "type": "quantitative", "title": "Number of Sales", "format": ","},
+              {"field": "median_price", "type": "quantitative", "title": "Median Price (AED/m²)", "format": ",.0f"}
+            ]
+          }
+        }
+      ]
+    };
+
+    vegaEmbed("#task3", task3Spec, { actions: false })
+      .catch(error => {
+        console.error(error);
+        document.querySelector("#task3").textContent =
+          "Map error. Check the browser console for details.";
+      });
+  </script>
+</body>
+</html>
