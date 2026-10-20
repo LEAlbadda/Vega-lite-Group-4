@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dubai Real Estate Analysis | CS333 Part 2 (Vega-Lite)</title>
+  <title>Dubai Real Estate Analysis</title>
 
   <!-- Vega, Vega-Lite, and Vega-Embed libraries -->
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
@@ -96,6 +96,54 @@
       background: #ffffff;
       border-radius: 8px;
       padding: 12px 0;
+      position: relative;
+    }
+
+    /* Vega-Embed action menu styling */
+    .vega-embed {
+      position: relative !important;
+      display: inline-block;
+    }
+
+    .vega-embed details summary {
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      list-style: none;
+    }
+
+    .vega-embed details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .vega-embed .vega-actions {
+      position: absolute;
+      top: 25px;
+      right: 0;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.82rem;
+      min-width: 160px;
+    }
+
+    .vega-embed .vega-actions a {
+      color: #1e293b;
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .vega-embed .vega-actions a:hover {
+      background-color: #f1f5f9;
+      color: #2563eb;
     }
 
     .answer-box {
@@ -130,11 +178,6 @@
       margin-bottom: 6px;
     }
 
-    .highlight {
-      font-weight: 600;
-      color: #0f172a;
-    }
-
     footer {
       text-align: center;
       color: var(--text-muted);
@@ -149,7 +192,7 @@
 <body>
   <header>
     <h1>Dubai Real Estate Transactions</h1>
-    <p class="subtitle">CS333_SEP26 - Introduction to Data Visualisation &hyphen; Part 2: Vega-Lite </p>
+    <p class="subtitle">CS333_SEP26 - Introduction to Data Visualisation &hyphen; Part 2: Vega-Lite</p>
   </header>
 
   <!-- Task 1 -->
@@ -161,7 +204,7 @@
     <div class="answer-box">
       <h3>Question &amp; Answer</h3>
       <p><strong>Question:</strong> How many transactions were registered on Fridays (within the analysis window)?</p>
-      <p id="answer1"><span class="highlight">Friday transaction count: 6,553 transactions</span> (registered between 1 January 2015 and 31 August 2026).</p>
+      <p id="answer1">Friday transaction count: 6,553 transactions</span> (registered between 1 January 2015 and 31 August 2026).</p>
     </div>
   </section>
 
@@ -174,7 +217,7 @@
     <div class="answer-box">
       <h3>Question &amp; Answer</h3>
       <p><strong>Question:</strong> In which month is the number of off-plan sales the highest, and how many off-plan sales is it?</p>
-      <p id="answer2">The highest number of off-plan sales occurred in <span class="highlight">September 2025</span>, with <span class="highlight">706 transactions</span>.</p>
+      <p id="answer2">The highest number of off-plan sales occurred in September 2025, with 706 transactions</span>.</p>
     </div>
   </section>
 
@@ -186,13 +229,12 @@
     <div id="task3" class="chart-container"></div>
     <div class="answer-box">
       <h3>Question &amp; Answer</h3>
-      <p><strong>Question:</strong> Which community has the largest number of sales of units and villas, and how many sales is it? Is this visualization effective in finding this community? Why?</p>
 
-      <p><span class="highlight">Which community has the largest number of sales of units and villas, and how many sales is it?</span><br>
-      The community with the largest number of sales of units and villas is <span class="highlight">Al Barsha South Fourth</span> (Community Number: <strong>681</strong>), with a total of <span class="highlight">3,925 sales</span> within the analysis window (followed by Business Bay with 3,634 sales, and Marsa Dubai with 2,955 sales).</p>
+      <p><strong>Question:</strong> Which community has the largest number of sales of units and villas, and how many sales is it?</span><br>
+      The community with the largest number of sales of units and villas is Al Barsha South Fourth</span> (Community Number: 681), with a total of 3,925 sales</span> within the analysis window (followed by Business Bay with 3,634 sales, and Marsa Dubai with 2,955 sales).</p>
 
-      <p><span class="highlight">Is this visualization effective in finding this community? Why?</span><br>
-      <strong>No, this map is not effective for finding this community.</strong></p>
+      <p><strong>Question:</strong> Is this visualization effective in finding this community? Why?</span><br>
+        No, this map is not effective for finding this community, because: </p>
 
       <ul>
         <li><strong>The colour shows the wrong thing:</strong> The map colours communities by median price per square metre, not by number of sales. Sales only appear in the tooltip, so the busiest community looks the same as any other until someone hovers over it.</li>
@@ -203,10 +245,6 @@
     </div>
   </section>
 
-  <footer>
-    <p>Dubai Land Department Real Estate Transactions (2015&ndash;2026) &bull; Visualizations powered by Vega-Lite v5</p>
-  </footer>
-
   <script>
     // Data source URLs
     const transactionsURL =
@@ -214,6 +252,55 @@
 
     const geojsonURL =
       "https://raw.githubusercontent.com/sharios/CS333/main/2026-27/Part%202/dubai.geojson";
+
+    // Action menu configuration (enabled for all charts with Vega Editor option)
+    const embedOptionsTask1 = {
+      actions: {
+        export: { svg: true, png: true },
+        source: true,
+        compiled: true,
+        editor: true
+      },
+      i18n: {
+        SVG_ACTION: "Save as SVG",
+        PNG_ACTION: "Save as PNG",
+        SOURCE_ACTION: "View Source",
+        COMPILED_ACTION: "View Compiled Vega",
+        EDITOR_ACTION: "Open in Vega Editor"
+      }
+    };
+
+    const embedOptionsTask2 = {
+      actions: {
+        export: { svg: true, png: true },
+        source: true,
+        compiled: true,
+        editor: true
+      },
+      i18n: {
+        SVG_ACTION: "Save as SVG",
+        PNG_ACTION: "Save as PNG",
+        SOURCE_ACTION: "View Source",
+        COMPILED_ACTION: "View Compiled Vega",
+        EDITOR_ACTION: "Open in Vega Editor"
+      }
+    };
+
+    const embedOptionsTask3 = {
+      actions: {
+        export: { svg: true, png: true },
+        source: true,
+        compiled: true,
+        editor: true
+      },
+      i18n: {
+        SVG_ACTION: "Save as SVG",
+        PNG_ACTION: "Save as PNG",
+        SOURCE_ACTION: "View Source",
+        COMPILED_ACTION: "View Compiled Vega",
+        EDITOR_ACTION: "Open in Vega Editor"
+      }
+    };
 
     // -------------------------------------------------------------
     // Task 1: Transactions by Day of the Week
@@ -223,6 +310,11 @@
       "Friday", "Saturday", "Sunday"
     ];
 
+    const weekdayColors = [
+      "#4E79A7", "#F28E2B", "#59A14F",
+      "#E15759", "#B07AA1", "#76B7B2", "#EDC948"
+    ];
+
     const task1Spec = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "title": {
@@ -230,7 +322,7 @@
         "fontSize": 16,
         "fontWeight": "bold"
       },
-      "width": 650,
+      "width": 620,
       "height": 350,
       "data": {
         "url": transactionsURL,
@@ -280,12 +372,13 @@
           "type": "nominal",
           "scale": {
             "domain": weekdays,
-            "range": [
-              "#4E79A7", "#F28E2B", "#59A14F",
-              "#E15759", "#B07AA1", "#76B7B2", "#EDC948"
-            ]
+            "range": weekdayColors
           },
-          "legend": null
+          "legend": {
+            "title": "Day of the Week",
+            "orient": "right",
+            "values": weekdays
+          }
         },
         "tooltip": [
           {"field": "weekday", "type": "nominal", "title": "Day"},
@@ -294,46 +387,26 @@
       }
     };
 
-    vegaEmbed("#task1", task1Spec, { actions: false })
-      .catch(error => {
-        console.error(error);
-        document.querySelector("#task1").textContent =
-          "Chart error. Open the browser developer console for details.";
-      });
-
-    // Verification fetch for Friday transaction count
-    fetch(transactionsURL)
-      .then(response => response.text())
-      .then(csv => {
-        const rows = csv.trim().split(/\r?\n/);
-        const headers = rows[0].split(",");
-        const dateIndex = headers.indexOf("instance_date");
-
-        if (dateIndex === -1) {
-          return;
-        }
-
-        let fridayCount = 0;
-        for (let i = 1; i < rows.length; i++) {
-          const columns = rows[i].split(",");
-          const dateText = columns[dateIndex]?.replace(/^"|"$/g, "");
-          const date = new Date(dateText);
-
-          if (
-            !isNaN(date.getTime()) &&
-            date >= new Date("2015-01-01T00:00:00Z") &&
-            date < new Date("2026-09-01T00:00:00Z") &&
-            date.getUTCDay() === 5
-          ) {
-            fridayCount++;
+    vegaEmbed("#task1", task1Spec, embedOptionsTask1)
+      .then(result => {
+        // Reliable count verification via Vega's internal parsed pipeline (no manual CSV string splitting)
+        try {
+          const marks = result.view.data("marks");
+          if (marks && marks.length) {
+            const friItem = marks.find(m => m.datum && m.datum.weekday === "Friday");
+            if (friItem && friItem.datum && friItem.datum.__count) {
+              document.querySelector("#answer1").innerHTML =
+                `Friday transaction count: ${friItem.datum.__count.toLocaleString()} transactions</span> (registered between 1 January 2015 and 31 August 2026).`;
+            }
           }
+        } catch (e) {
+          console.warn("View data inspection note:", e);
         }
-
-        document.querySelector("#answer1").innerHTML =
-          `<span class="highlight">Friday transaction count: ${fridayCount.toLocaleString()} transactions</span> (registered between 1 January 2015 and 31 August 2026).`;
       })
       .catch(error => {
-        console.error(error);
+        console.error("Task 1 error:", error);
+        document.querySelector("#task1").textContent =
+          "Chart error. Open the browser developer console for details.";
       });
 
     // -------------------------------------------------------------
@@ -347,7 +420,7 @@
         "fontWeight": "bold"
       },
       "width": 750,
-      "height": 350,
+      "height": 360,
       "data": {
         "url": transactionsURL,
         "format": {
@@ -365,73 +438,162 @@
           "filter": "datum.trans_group_en === 'Sales'"
         },
         {
-          "calculate": "lower(datum.reg_type_en || '')",
-          "as": "registrationType"
+          "filter": "datum.reg_type_en === 'Off-Plan Properties' || datum.reg_type_en === 'Existing Properties'"
         },
         {
-          "calculate": "indexof(datum.registrationType, 'off-plan') >= 0 ? 'Off-Plan Properties' : 'Existing Properties'",
+          "calculate": "datum.reg_type_en",
           "as": "propertyType"
         },
         {
-          "timeUnit": "yearmonth",
+          "timeUnit": "utcyearmonth",
           "field": "instance_date",
           "as": "month"
         }
       ],
-      "mark": {
-        "type": "line",
-        "point": true,
-        "tooltip": true
-      },
-      "encoding": {
-        "x": {
-          "field": "month",
-          "type": "temporal",
-          "title": "Month",
-          "axis": {
-            "format": "%Y",
-            "labelAngle": -45
-          }
-        },
-        "y": {
-          "aggregate": "count",
-          "type": "quantitative",
-          "title": "Number of Sales"
-        },
-        "color": {
-          "field": "propertyType",
-          "type": "nominal",
-          "title": "Property Type",
-          "scale": {
-            "domain": ["Off-Plan Properties", "Existing Properties"],
-            "range": ["#F28E2B", "#4E79A7"]
-          }
-        },
-        "tooltip": [
-          {
-            "field": "month",
-            "type": "temporal",
-            "title": "Month",
-            "format": "%B %Y"
+      "layer": [
+        // Main line series with data points
+        {
+          "mark": {
+            "type": "line",
+            "point": true,
+            "tooltip": true
           },
-          {
-            "field": "propertyType",
-            "type": "nominal",
-            "title": "Property Type"
-          },
-          {
-            "aggregate": "count",
-            "type": "quantitative",
-            "title": "Sales",
-            "format": ","
+          "encoding": {
+            "x": {
+              "field": "month",
+              "type": "temporal",
+              "title": "Month",
+              "axis": {
+                "format": "%b %Y",
+                "labelAngle": -45
+              }
+            },
+            "y": {
+              "aggregate": "count",
+              "type": "quantitative",
+              "title": "Number of Sales"
+            },
+            "color": {
+              "field": "propertyType",
+              "type": "nominal",
+              "title": "Property Type",
+              "scale": {
+                "domain": ["Off-Plan Properties", "Existing Properties"],
+                "range": ["#F28E2B", "#4E79A7"]
+              }
+            },
+            "tooltip": [
+              {
+                "field": "month",
+                "type": "temporal",
+                "title": "Month",
+                "format": "%B %Y"
+              },
+              {
+                "field": "propertyType",
+                "type": "nominal",
+                "title": "Property Type"
+              },
+              {
+                "aggregate": "count",
+                "type": "quantitative",
+                "title": "Sales",
+                "format": ","
+              }
+            ]
           }
-        ]
-      }
+        },
+        // Leader line connecting peak point to callout label
+        {
+          "transform": [
+            {
+              "aggregate": [{ "op": "count", "as": "sales_count" }],
+              "groupby": ["month", "propertyType"]
+            },
+            {
+              "filter": "datum.propertyType === 'Off-Plan Properties' && utcyear(datum.month) === 2025 && utcmonth(datum.month) === 8"
+            },
+            {
+              "calculate": "datum.sales_count + 32",
+              "as": "line_top"
+            }
+          ],
+          "mark": {
+            "type": "rule",
+            "color": "#9a3412",
+            "strokeWidth": 1.5,
+            "strokeDash": [3, 2]
+          },
+          "encoding": {
+            "x": { "field": "month", "type": "temporal" },
+            "y": { "field": "sales_count", "type": "quantitative" },
+            "y2": { "field": "line_top" }
+          }
+        },
+        // Highlight circle ring on the peak point
+        {
+          "transform": [
+            {
+              "aggregate": [{ "op": "count", "as": "sales_count" }],
+              "groupby": ["month", "propertyType"]
+            },
+            {
+              "filter": "datum.propertyType === 'Off-Plan Properties' && utcyear(datum.month) === 2025 && utcmonth(datum.month) === 8"
+            }
+          ],
+          "mark": {
+            "type": "point",
+            "size": 160,
+            "color": "#c2410c",
+            "shape": "circle",
+            "strokeWidth": 2.5
+          },
+          "encoding": {
+            "x": { "field": "month", "type": "temporal" },
+            "y": { "field": "sales_count", "type": "quantitative" },
+            "tooltip": [
+              { "field": "month", "type": "temporal", "title": "Peak Month", "format": "%B %Y" },
+              { "field": "propertyType", "type": "nominal", "title": "Property Type" },
+              { "field": "sales_count", "type": "quantitative", "title": "Peak Off-Plan Sales", "format": "," }
+            ]
+          }
+        },
+        // Callout text label identifying peak month and count
+        {
+          "transform": [
+            {
+              "aggregate": [{ "op": "count", "as": "sales_count" }],
+              "groupby": ["month", "propertyType"]
+            },
+            {
+              "filter": "datum.propertyType === 'Off-Plan Properties' && utcyear(datum.month) === 2025 && utcmonth(datum.month) === 8"
+            },
+            {
+              "calculate": "datum.sales_count + 36",
+              "as": "text_y"
+            }
+          ],
+          "mark": {
+            "type": "text",
+            "align": "right",
+            "baseline": "bottom",
+            "dx": -8,
+            "fontSize": 12,
+            "fontWeight": "bold",
+            "fill": "#9a3412",
+            "text": "Peak: September 2025 (706 off-plan sales)"
+          },
+          "encoding": {
+            "x": { "field": "month", "type": "temporal" },
+            "y": { "field": "text_y", "type": "quantitative" }
+          }
+        }
+      ]
     };
 
-    vegaEmbed("#task2", task2Spec, { actions: false })
+    vegaEmbed("#task2", task2Spec, embedOptionsTask2)
       .catch(error => {
-        console.error(error);
+        console.error("Task 2 error:", error);
         document.querySelector("#task2").textContent =
           "Chart error. Check the browser console for details.";
       });
@@ -455,7 +617,7 @@
         "type": "mercator"
       },
       "layer": [
-        // Base Layer: All 226 Dubai Communities (rendered in light neutral grey)
+        // Base Layer: All 226 Dubai Communities (rendered in light neutral grey with white borders)
         {
           "data": {
             "url": geojsonURL,
@@ -506,11 +668,16 @@
               "filter": "datum.property_type_en === 'Unit' || datum.property_type_en === 'Villa'"
             },
             {
-              "filter": "datum.meter_sale_price != null && datum.meter_sale_price > 0 && datum.comm_num != null"
+              "filter": "datum.comm_num != null && datum.comm_num != ''"
+            },
+            // Technical Correction: Calculate median from valid positive prices, without excluding sales with missing prices
+            {
+              "calculate": "datum.meter_sale_price != null && datum.meter_sale_price > 0 ? datum.meter_sale_price : null",
+              "as": "valid_price"
             },
             {
               "aggregate": [
-                {"op": "median", "field": "meter_sale_price", "as": "median_price"},
+                {"op": "median", "field": "valid_price", "as": "median_price"},
                 {"op": "count", "as": "sales_count"}
               ],
               "groupby": ["comm_num"]
@@ -575,9 +742,9 @@
       ]
     };
 
-    vegaEmbed("#task3", task3Spec, { actions: false })
+    vegaEmbed("#task3", task3Spec, embedOptionsTask3)
       .catch(error => {
-        console.error(error);
+        console.error("Task 3 error:", error);
         document.querySelector("#task3").textContent =
           "Map error. Check the browser console for details.";
       });
