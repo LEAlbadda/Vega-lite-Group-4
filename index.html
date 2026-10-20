@@ -149,14 +149,13 @@
 <body>
   <header>
     <h1>Dubai Real Estate Transactions</h1>
-    <p class="subtitle">CS333 Data Visualization &mdash; Part 2: Interactive Analysis in Vega-Lite (Analysis Window: 1 Jan 2015 &ndash; 31 Aug 2026)</p>
+    <p class="subtitle">CS333_SEP26 - Introduction to Data Visualisation &mdash; Part 2: Vega-Lite </p>
   </header>
 
   <!-- Task 1 -->
   <section id="task1-section">
     <h2>
       <span>Task 1: Transactions by Day of the Week</span>
-      <span class="badge">30%</span>
     </h2>
     <div id="task1" class="chart-container"></div>
     <div class="answer-box">
@@ -170,7 +169,6 @@
   <section id="task2-section">
     <h2>
       <span>Task 2: Monthly Sales: Off-Plan vs. Existing Properties</span>
-      <span class="badge">30%</span>
     </h2>
     <div id="task2" class="chart-container"></div>
     <div class="answer-box">
@@ -184,31 +182,23 @@
   <section id="task3-section">
     <h2>
       <span>Task 3: Map of Prices Across Dubai's Communities</span>
-      <span class="badge">40%</span>
     </h2>
     <div id="task3" class="chart-container"></div>
     <div class="answer-box">
       <h3>Question &amp; Answer</h3>
       <p><strong>Question:</strong> Which community has the largest number of sales of units and villas, and how many sales is it? Is this visualization effective in finding this community? Why?</p>
-      
-      <p><span class="highlight">1. Highest Sales Community:</span><br>
-      The community with the largest number of sales of units and villas is <span class="highlight">Al Barsha South Fourth</span> (Community Number: <strong>681</strong>), with a total of <span class="highlight">3,925 sales</span> within the analysis window (followed by Business Bay with 3,634 sales, and Marsa Dubai with 2,955 sales).</p>
-      
-      <p><span class="highlight">2. Effectiveness of this Visualization:</span><br>
-      <strong>No, this choropleth map visualization is not effective for finding this community.</strong></p>
 
-      <p><span class="highlight">3. Justification (Visualization Principles):</span></p>
+      <p><span class="highlight">Which community has the largest number of sales of units and villas, and how many sales is it?</span><br>
+      The community with the largest number of sales of units and villas is <span class="highlight">Al Barsha South Fourth</span> (Community Number: <strong>681</strong>), with a total of <span class="highlight">3,925 sales</span> within the analysis window (followed by Business Bay with 3,634 sales, and Marsa Dubai with 2,955 sales).</p>
+
+      <p><span class="highlight">Is this visualization effective in finding this community? Why?</span><br>
+      <strong>No, this map is not effective for finding this community.</strong></p>
+
       <ul>
-        <li><strong>Visual Variable / Encoding Mismatch:</strong> In this choropleth map, the primary visual channel (color hue and luminance) encodes <em>median price per square metre</em>, not the transaction volume (sales count). Sales count is not mapped to any visual variable on the map; it is only accessible interactively via tooltips on mouse hover. Therefore, a reader cannot visually distinguish between high-volume and low-volume communities by looking at the map.</li>
-        <li><strong>Area / Size Distortion (Choropleth Bias):</strong> Choropleth maps inherently draw visual attention to large geographic polygons (such as peripheral or desert communities) regardless of how few transactions took place there. High-density urban communities with large transaction counts (like Al Barsha South Fourth, Business Bay, and Marsa Dubai) have smaller, compact geographic footprints, making them easy to miss.</li>
-        <li><strong>High Cognitive Load / Exhaustive Search:</strong> Because transaction volume is hidden behind tooltips, finding the community with the highest sales requires an exhaustive trial-and-error search across all 226 communities. The reader must sequentially hover over every polygon, read the numbers, and remember the maximum.</li>
-        <li><strong>Sample Size Reliability:</strong> Communities with only a handful of sales (e.g., Jumeirah Second with only 23 sales at AED 75,635/m², or Oud Al Muteena First with only 1 sale) receive intense coloration, giving an exaggerated visual impression of market significance despite very small sample sizes.</li>
-        <li><strong>More Effective Alternative Visualizations:</strong>
-          <ul>
-            <li>A <strong>horizontal bar chart</strong> with communities sorted descending by sales count would allow instant, pre-attentive identification of Al Barsha South Fourth as the top community.</li>
-            <li>A <strong>proportional symbol (bubble) map</strong>, where circle size encodes sales count and circle color encodes median price per m² (as used in Part 1), would communicate both dimensions simultaneously and effectively.</li>
-          </ul>
-        </li>
+        <li><strong>The colour shows the wrong thing:</strong> The map colours communities by median price per square metre, not by number of sales. Sales only appear in the tooltip, so the busiest community looks the same as any other until someone hovers over it.</li>
+        <li><strong>Big areas steal the attention:</strong> Large desert communities with very few sales take up most of the map, while busy urban ones like Al Barsha South Fourth are small and easy to miss.</li>
+        <li><strong>It takes too much effort:</strong> The only way to find the top community is to hover over all 226 of them and remember the highest number.</li>
+        <li><strong>Better options:</strong> A sorted horizontal bar chart would show Al Barsha South Fourth at the top straight away. A bubble map, with size for sales and colour for price, would show both at once.</li>
       </ul>
     </div>
   </section>
